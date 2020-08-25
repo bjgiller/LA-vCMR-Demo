@@ -1,6 +1,8 @@
 package com.example.application.business;
 
 import java.io.Serializable;
+import java.util.LinkedList;
+import java.util.List;
 
 public class User implements Serializable {
     private String firstName;
@@ -15,6 +17,43 @@ public class User implements Serializable {
     private String zip;
     private String homeTelephone;
     private String ceullarPhonePager;
+
+    public List<User> createUsers(List<List<String>> excelData){
+        List<User> users = new LinkedList<>();
+        for (List<String> user: excelData){
+            users.add(new User(user.get(0),
+                    user.get(1),
+                    user.get(2),
+                    user.get(3),
+                    user.get(4),
+                    user.get(5),
+                    user.get(6),
+                    user.get(7),
+                    user.get(8),
+                    user.get(9),
+                    user.get(10),
+                    user.get(11)
+                    ));
+        }
+        return users;
+    }
+
+    public User(String firstName, String lastName, String sex, String reportedRace, String ethnicity, String streetAddress, String email, String city, String state, String zip, String homeTelephone, String ceullarPhonePager) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.sex = sex;
+        this.reportedRace = reportedRace;
+        this.ethnicity = ethnicity;
+        this.streetAddress = streetAddress;
+        this.email = email;
+        this.city = city;
+        State = state;
+        this.zip = zip;
+        this.homeTelephone = homeTelephone;
+        this.ceullarPhonePager = ceullarPhonePager;
+    }
+
+    public User(){}
 
     public String getFirstName() {
         return firstName;

@@ -1,54 +1,45 @@
 package com.example.application.business;
 
-import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import java.util.Iterator;
+
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Component;
 
 import java.io.InputStream;
+import java.util.LinkedList;
+import java.util.List;
 
 @Component
 public class ExcelReader {
-    public int readExcell(InputStream e) {
-        int cols=0;
-        try {
-            POIFSFileSystem fs = new POIFSFileSystem(e);
-            HSSFWorkbook wb = new HSSFWorkbook(fs);
-            HSSFSheet sheet = wb.getSheetAt(0);
-            HSSFRow row;
-            HSSFCell cell;
-
-            int rows; // No of rows
-            rows = sheet.getPhysicalNumberOfRows();
-
-            cols = 0; // No of columns
-            int tmp = 0;
-
-            // This trick ensures that we get the data properly even if it doesn't start from first few rows
-            for(int i = 0; i < 10 || i < rows; i++) {
-                row = sheet.getRow(i);
-                if(row != null) {
-                    tmp = sheet.getRow(i).getPhysicalNumberOfCells();
-                    if(tmp > cols) cols = tmp;
+    public List<List<String>> readExcell(InputStream fis) {
+        List<List<String>> table = new LinkedList<>();
+        List<String> rowList = new LinkedList<>();
+        try
+        {
+            //creating Workbook instance that refers to .xlsx file
+            XSSFWorkbook wb = new XSSFWorkbook(fis);
+            XSSFSheet sheet = wb.getSheetAt(0);     //creating a Sheet object to retrieve object
+            Iterator<Row> itr = sheet.iterator();    //iterating over excel file
+            while (itr.hasNext())
+            {
+                Row row = itr.next();
+                Iterator<Cell> cellIterator = row.cellIterator();   //iterating over each column
+                while (cellIterator.hasNext())
+                {
+                    Cell cell = cellIterator.next();
+                    rowList.add(cell.getStringCellValue());
                 }
+                table.add(rowList);
+                rowList = new LinkedList<>();
             }
-
-            for(int r = 0; r < rows; r++) {
-                row = sheet.getRow(r);
-                if(row != null) {
-                    for(int c = 0; c < cols; c++) {
-                        cell = row.getCell((short)c);
-                        if(cell != null) {
-                            // Your code here
-                        }
-                    }
-                }
-            }
-        } catch(Exception ioe) {
-            ioe.printStackTrace();
         }
-        return cols;
+        catch(Exception e)
+        {
+            e.printStackTrace();
+        }
+        return table;
     }
 }
